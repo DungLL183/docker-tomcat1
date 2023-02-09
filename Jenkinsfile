@@ -1,25 +1,21 @@
-pipeline {
+node{
     agent any
 	
 	tools
     {
        maven 'maven'
     }
- stages {
-      stage('checkout') {
-           steps {
+    stage('checkout') {
                 git branch: 'https://github.com/DungLL183/docker-tomcat.git'
-          }
         }
-	 stage('Execute Maven') {
-           steps {
+	stage('Execute Maven') {
                 sh 'mvn clean package'             
-          }
+      
         }
   	stage('Docker Build') {
-           steps {
+          
                 sh 'docker build -t samplewebapp:v4 .'
-          }
+          
         }
 	 
 	 stage('docker push'){
@@ -30,12 +26,11 @@ pipeline {
 	 }
      
  	stage('Run Docker container on remote hosts') {
-             
-            steps {
-                sh "docker -H ssh://ubuntu@ip-172-31-12-3 run -d -p 8080 dungll183/samplewebapp:v4"
- 
-            }
-        }
-    }
+		def dockerRun = 'docker run -it --name my-application -p 8080:8080 -d dungll183/samplewebapp:v4'
+		sshagent(['ssh-ec2']) {
+                sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.12.3 ${dockerRun}
+		}
 	}
+    }
+}
     
