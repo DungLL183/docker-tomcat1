@@ -1,4 +1,4 @@
-FROM tomcat:9.0.71-jre8-temurin-focal
+FROM tomcat:9.0.71
 LABEL maintainer="nguyen.dung@gmail.com"
 
 # ADD sample.war /apache-tomcat-9.0.71/webapps/
